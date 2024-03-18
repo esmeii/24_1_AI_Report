@@ -1,173 +1,95 @@
+import torch
+import torch.nn as nn
+import torch.optim as optim
 import numpy as np
-import random
 import csv
-from collections import deque
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.optimizers import Adam
 
-class JobShopSchedulingEnv:
-    def __init__(self, jobs):
-        self.jobs = jobs
-        self.num_jobs = len(jobs)
-        
-        # Calculate the number of machines
-        self.num_machines = max(task[0] for job in jobs for task in job) + 1  # Add 1 to account for 0-indexing
+# Define the neural network architecture
+class DQN(nn.Module):
+    def __init__(self, input_size, output_size):
+        super(DQN, self).__init__()
+        self.fc1 = nn.Linear(input_size, 128)
+        self.fc2 = nn.Linear(128, 64)
+        self.fc3 = nn.Linear(64, output_size)
 
-        self.machine_times = [0] * self.num_machines
-        self.current_job = 0
-        self.current_task = 0
-        self.done = False
-        self.num_states = (self.num_machines * 2) + 2  # 상태의 크기를 계산합니다.
+    def forward(self, x):
+        x = torch.relu(self.fc1(x))
+        x = torch.relu(self.fc2(x))
+        x = self.fc3(x)
+        return x
 
-    def reset(self):
-        self.machine_times = [0] * self.num_machines
-        self.current_job = 0
-        self.current_task = 0
-        self.done = False
-        return self.get_state()
+# Hyperparameters
+alpha = 0.1  # learning rate
+gamma = 0.9  # discount factor
+epsilon = 0.1  # exploration rate
+batch_size = 64
+num_epochs = 50
 
-    def get_state(self):
-        state = [self.machine_times[machine] for machine in range(self.num_machines)]
-        state.extend([self.current_job, self.current_task])
-        state += [0] * (self.num_states - len(state))  # 상태를 패딩하여 일관된 크기로 유지합니다.
-        return np.array(state)
+# Environment parameters
+num_jobs = 36
+num_machines = 2
+num_actions = num_jobs * num_machines  # Number of possible actions
 
-    def step(self, action):
-        if self.done:
-            raise ValueError("Episode is done. Please reset the environment.")
+# Initialize DQN
+dqn = DQN(input_size=num_jobs * num_machines, output_size=num_actions)
+optimizer = optim.Adam(dqn.parameters(), lr=alpha)
+criterion = nn.MSELoss()
 
-        machine, processing_time = self.jobs[self.current_job][self.current_task]
-        self.machine_times[machine - 1] += processing_time
+# Function to select an action
+def select_action(state):
+    if np.random.rand() < epsilon:
+        return np.random.randint(num_actions)  # Exploration: choose random action
+    else:
+        with torch.no_grad():
+            state = torch.tensor(state, dtype=torch.float32).unsqueeze(0)
+            q_values = dqn(state)
+            return torch.argmax(q_values).item()  # Exploitation: choose best action
 
-        self.current_task += 1
-        if self.current_task >= len(self.jobs[self.current_job]):
-            self.current_job += 1
-            self.current_task = 0
-            if self.current_job >= self.num_jobs:
-                self.done = True
+# Function to update DQN
+def update_dqn(states, actions, rewards, next_states):
+    states = torch.tensor(states, dtype=torch.float32)
+    actions = torch.tensor(actions, dtype=torch.int64)
+    rewards = torch.tensor(rewards, dtype=torch.float32)
+    next_states = torch.tensor(next_states, dtype=torch.float32)
 
-        next_state = self.get_state()
-        reward = -1  # Constant penalty for each step
+    q_values = dqn(states)
+    q_values_next = dqn(next_states).detach()
+    q_values_targets = q_values.clone()
 
-        if self.done:
-            reward += self.calculate_makespan() * -0.1  # Additional penalty based on makespan
+    for i in range(len(actions)):
+        q_values_targets[i][actions[i]] = rewards[i] + gamma * torch.max(q_values_next[i])
 
-        return next_state, reward, self.done
+    loss = criterion(q_values, q_values_targets)
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
 
-    def calculate_makespan(self):
-        return max(self.machine_times)
-
-class DQNAgent:
-    def __init__(self, state_size, action_size):
-        self.state_size = state_size
-        self.action_size = action_size
-        self.memory = deque(maxlen=2000)
-        self.gamma = 0.95  # Discount factor
-        self.epsilon = 1.0  # Exploration rate
-        self.epsilon_min = 0.01
-        self.epsilon_decay = 0.995
-        self.learning_rate = 0.001
-        self.model = self._build_model()
-
-    def _build_model(self):
-        model = Sequential()
-        model.add(Dense(24, input_dim=self.state_size, activation='relu'))
-        model.add(Dense(24, activation='relu'))
-        model.add(Dense(self.action_size, activation='linear'))
-        model.compile(loss='mse', optimizer=Adam(learning_rate=self.learning_rate))
-        return model
-
-
-    def remember(self, state, action, reward, next_state, done):
-        self.memory.append((state, action, reward, next_state, done))
-
-    def act(self, state):
-        if np.random.rand() <= self.epsilon:
-            return random.randrange(self.action_size)
-        state = np.reshape(state, [1, self.state_size])  # Reshape state
-        act_values = self.model.predict(state)  
-        return np.argmax(act_values[0])
+# Function to simulate an episode
+def simulate_episode(jobs):
+    state = [0] * (num_jobs * num_machines)  # Start state
+    total_completion_time = 0
     
-    def replay(self, batch_size):
-        minibatch = random.sample(self.memory, batch_size)
-        for state, action, reward, next_state, done in minibatch:
-            target = reward
-            if not done:
-                target = (reward + self.gamma * np.amax(self.model.predict(np.array(next_state))[0]))
-            target_f = self.model.predict(np.array(state))
-            target_f[0][action] = target
-            self.model.fit(np.array(state), target_f, epochs=1, verbose=0)
+    for job in jobs:
+        for task in job:
+            action = select_action(state)
+            machine_id, processing_time = task
+            total_completion_time += processing_time
+            state[action] += processing_time  # Update state
+            update_dqn([state], [action], [-processing_time], [state])  # Update DQN
+    return total_completion_time
 
-def load_problems_from_csv(file_paths):
-    problems = []
-    for file_path in file_paths:
-        with open(file_path, 'r') as file:
-            reader = csv.reader(file)
-            for row in reader:
-                # Parse each row into a list of tuples (machine, processing time)
-                problem = [tuple(map(int, pair.split(','))) for pair in row]
-                problems.append(problem)
-    return problems
+# Solve problems from 1 to 100
+for problem_number in range(1, 101):
+    # Load problem data
+    filename = f"problem_{problem_number}.csv"
+    with open(filename, 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        jobs = [[tuple(map(int, task.split(','))) for task in row] for row in reader]
 
-def train_agent(problems, num_episodes=10000, batch_size=32, replay_start_size=100):
-    # Load problems from CSV files
-    file_paths = [f"problem_{i}.csv" for i in range(1, 1001)]
-    problems = load_problems_from_csv(file_paths)
+    # Solve problem using DQN
+    print(f"Solving problem {problem_number}...")
+    completion_time = simulate_episode(jobs)
 
-    num_states = 36 * 36 + 2  # Adjust based on the actual size and structure of your state array
-    num_actions = 36 + 1  # Adjust based on the number of machines
-
-    agent = DQNAgent(num_states, num_actions)
-
-    num_training_problems = 900
-    num_testing_problems = 100
-
-    training_problems = problems[:num_training_problems]
-    testing_problems = problems[num_training_problems:]
-
-    for episode in range(num_episodes):
-        total_reward = 0
-        total_makespan = 0
-        for problem in training_problems:
-            env = JobShopSchedulingEnv(problem)
-            state = env.reset()
-            state = np.reshape(state, [1, num_states])  # Adjust the shape based on num_states
-            done = False
-            while not done:
-                action = agent.act(state)
-                next_state, reward, done = env.step(action)
-                next_state = np.reshape(next_state, [1, num_states])  # Adjust the shape based on num_states
-                total_reward += reward
-                agent.remember(state, action, reward, next_state, done)
-                state = next_state
-            total_makespan += env.calculate_makespan()
-        
-        if len(agent.memory) >= replay_start_size:
-            for _ in range(10):  
-                agent.replay(batch_size)
-
-        if (episode + 1) % 100 == 0:
-            print(f"Training - Episode {episode + 1}, Total Reward: {total_reward}, Total Makespan: {total_makespan}")
-
-    total_reward_test = 0
-    total_makespan_test = 0
-    for i, problem in enumerate(testing_problems, 1):
-        env = JobShopSchedulingEnv(problem)
-        state = env.reset()
-        state = np.reshape(state, [1, num_states])  # Adjust the shape based on num_states
-        done = False
-        while not done:
-            action = agent.act(state)
-            next_state, reward, done = env.step(action)
-            next_state = np.reshape(next_state, [1, num_states])  # Adjust the shape based on num_states
-            total_reward_test += reward
-            state = next_state
-        total_makespan_test += env.calculate_makespan()
-        print(f"Testing - Problem {i}/{num_testing_problems}, Total Reward: {total_reward_test}, Total Makespan: {total_makespan_test}")
-
-# Example usage
-if __name__ == "__main__":
-    file_paths = [f"problem_{i}.csv" for i in range(1, 1001)]  # Path to JSP problem
-    problems = load_problems_from_csv(file_paths)
-    train_agent(problems)
+    # Print results
+    print(f"Best schedule for problem {problem_number}:")
+    print(f"Completion time: {completion_time}")

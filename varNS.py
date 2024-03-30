@@ -21,9 +21,18 @@ def calculate_makespan(jobs):
 
 def shaking(jobs, k):
     new_jobs = [list(job) for job in jobs]
-    for _ in range(k):
-        job1, job2 = random.sample(range(len(new_jobs)), 2)
-        new_jobs[job1], new_jobs[job2] = new_jobs[job2], new_jobs[job1]
+    if k <= len(jobs) / 2:
+        # 단순 교환: k 값에 따라 교환하는 작업의 수를 증가시킵니다.
+        for _ in range(k):
+            job1, job2 = random.sample(range(len(new_jobs)), 2)
+            new_jobs[job1], new_jobs[job2] = new_jobs[job2], new_jobs[job1]
+    else:
+        # 연속적 교환: k 값에 따라 연속적인 작업을 교환합니다.
+        start_point = random.randint(0, len(new_jobs) - k)
+        end_point = start_point + k
+        jobs_sublist = new_jobs[start_point:end_point]
+        random.shuffle(jobs_sublist)
+        new_jobs[start_point:end_point] = jobs_sublist
     return new_jobs
 
 def local_search(jobs):
@@ -78,11 +87,8 @@ def print_jobs_allocation(jobs):
         for machine, _ in job:
             machine_allocations[machine].append(job_id)
 
-    # for machine, assigned_jobs in machine_allocations.items():
-    #     print(f"Machine {machine}: Jobs {assigned_jobs}")
-
 for i in range(1, 101):
     filename = f"problem_{i}.csv"
     makespan, jobs = variable_neighborhood_search(filename)
-    print(f"Problem {i}: Total makespan = {makespan}")
+    print(f"문제 {i}: 총 처리 시간 = {makespan}")
     print_jobs_allocation(jobs)

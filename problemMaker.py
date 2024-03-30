@@ -26,7 +26,7 @@ min_processing_time = 1  # Minimum processing time for a task
 max_processing_time = 5 # Maximum processing time for a task
 
 # Generate JSP problems
-for i in range(0,100):
+for i in range(100,200):
     jobs = generate_jsp(num_jobs, num_machines, min_processing_time, max_processing_time)
     filename = f"problem_{i+1}.csv"
     save_to_csv(jobs, filename)

@@ -1,6 +1,5 @@
 import csv
 import random
-import math
 
 # CSV 파일로부터 문제를 읽는 함수
 def read_problem_from_csv(filename):
@@ -14,6 +13,8 @@ def read_problem_from_csv(filename):
 
 # 적합도 함수: 총 makespan 계산
 def calculate_makespan(jobs):
+    # 간단한 방식으로 makespan을 계산합니다.
+    # 이 부분은 JSP의 복잡성에 따라 매우 다르게 구현될 수 있습니다.
     max_time = 0
     for job in jobs:
         job_time = sum([time for _, time in job])
@@ -21,38 +22,21 @@ def calculate_makespan(jobs):
             max_time = job_time
     return max_time
 
-# Simulated Annealing 알고리즘 구현
-def simulated_annealing_solver(filename):
+# 유전 알고리즘 구현 (매우 간소화된 버전)
+def genetic_algorithm_solver(filename):
     jobs = read_problem_from_csv(filename)
-    current_solution = jobs
-    current_makespan = calculate_makespan(current_solution)
-    best_solution = current_solution
-    best_makespan = current_makespan
     
-    # 초기 온도 및 냉각률 설정
-    temp = 10000
-    cooling_rate = 0.003
+    # 초기 개체군 생성 (여기서는 단순히 입력된 jobs를 사용)
+    # 실제 구현에서는 다양한 순서의 jobs를 생성해야 합니다.
+    initial_population = [jobs]  # 이 예제에서는 초기 개체군이 하나의 해만을 포함
     
-    while temp > 1:
-        # 새로운 해 생성 (여기서는 간단히 두 작업을 무작위로 교환)
-        new_solution = [list(job) for job in current_solution]
-        job1, job2 = random.sample(range(len(new_solution)), 2)
-        new_solution[job1], new_solution[job2] = new_solution[job2], new_solution[job1]
-        
-        new_makespan = calculate_makespan(new_solution)
-        
-        # 새로운 해의 적합도가 더 좋거나, 확률적으로 나쁜 해를 수용
-        if new_makespan < current_makespan or random.random() < math.exp((current_makespan - new_makespan) / temp):
-            current_solution = new_solution
-            current_makespan = new_makespan
-            
-            if current_makespan < best_makespan:
-                best_solution = current_solution
-                best_makespan = current_makespan
-        
-        temp *= 1 - cooling_rate
+    # 적합도 계산
+    makespan = calculate_makespan(jobs)
     
-    return best_makespan, best_solution
+    # 유전 알고리즘의 나머지 단계는 이 예제에서 생략됩니다.
+    # 선택, 교차, 변이 등의 과정을 통해 최적화할 필요가 있습니다.
+
+    return makespan, jobs
 
 def print_jobs_allocation(jobs):
     # 모든 작업을 검사하여 사용된 최대 기계 번호를 찾습니다.
@@ -69,9 +53,9 @@ def print_jobs_allocation(jobs):
     #     print(f"Machine {machine}: Jobs {assigned_jobs}")
 
 
-# 문제 해결 및 출력
+    # 문제 해결 및 출력
 for i in range(1, 101):
     filename = f"problem_{i}.csv"
-    makespan, jobs = simulated_annealing_solver(filename)
+    makespan, jobs = genetic_algorithm_solver(filename)
     print(f"Problem {i}: Total makespan = {makespan}")
     print_jobs_allocation(jobs)

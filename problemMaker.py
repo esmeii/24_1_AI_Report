@@ -20,10 +20,10 @@ def save_to_csv(jobs, filename):
 
 # Parameters
 num_problems = 100  # Number of JSP problems to generate
-num_jobs = 36      # Numaber of jobs in each problem
-num_machines = 2  # Number of machines in each problem
+num_jobs = 12      # Numaber of jobs in each problem
+num_machines = 5  # Number of machines in each problem
 min_processing_time = 1  # Minimum processing time for a task
-max_processing_time = 10 # Maximum processing time for a task
+max_processing_time = 5 # Maximum processing time for a task
 
 # Generate JSP problems
 for i in range(0,100):

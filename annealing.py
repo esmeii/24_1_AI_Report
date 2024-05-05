@@ -1,161 +1,82 @@
-import csv
 import random
 import math
-import time
-import numpy as np
 
-# 코드 실행 전 시간 측정
-start_time = time.time()
+def initial_solution(schedule):
+    # 초기 스케줄 생성
+    return random.sample(schedule, len(schedule))
 
-def read_problem_from_csv(filename):
-    jobs = []
-    with open(filename, 'r', newline='') as csvfile:
-        reader = csv.reader(csvfile)
-        for row in reader:
-            job = [(int(machine), int(time)) for machine, time in (task.split(',') for task in row)]
-            jobs.append(job)
-    return jobs
-
-def calculate_makespan(jobs):
-    max_time = 0
-    for job in jobs:
-        job_time = sum([time for _, time in job])
-        if job_time > max_time:
-            max_time = job_time
-    return max_time
-
-def swap_jobs(solution, index1, index2):
-    solution[index1], solution[index2] = solution[index2], solution[index1]
-
-def move_shortest_task_to_front(job):
-    if len(job) > 1:
-        shortest_task_index = min(range(len(job)), key=lambda index: job[index][1])
-        # 가장 짧은 작업을 맨 앞으로 이동
-        job.insert(0, job.pop(shortest_task_index))
-
-def optimize_critical_path(solution):
-    critical_jobs = sorted(solution, key=lambda job: sum(time for _, time in job), reverse=True)
-    if len(critical_jobs) > 2:
-        swap_jobs(critical_jobs, 0, 1)  # 가장 긴 두 작업의 위치를 바꿈
-    return critical_jobs
-
-def optimize_machine_distribution_with_MRPT(solution):
-    machine_loads = {}
-    for job in solution:
-        for machine, time in job:
-            if machine not in machine_loads:
-                machine_loads[machine] = 0
-            machine_loads[machine] += time
-    # 가장 바쁜 기계 찾기
-    busiest_machine = max(machine_loads, key=machine_loads.get)
-    # 해당 기계를 사용하는 작업들 중 남은 처리 시간이 가장 긴 작업을 찾아서 맨 앞으로 이동
-    jobs_using_busiest_machine = [(job_index, job) for job_index, job in enumerate(solution) if any(machine == busiest_machine for machine, _ in job)]
-    
-    if len(jobs_using_busiest_machine) > 1:
-        # 남은 처리 시간 계산
-        remaining_times = [(job_index, sum(time for _, time in job)) for job_index, job in jobs_using_busiest_machine]
-        # 남은 처리 시간이 가장 긴 작업을 찾음
-        longest_remaining_job_index = max(remaining_times, key=lambda x: x[1])[0]
-        # 해당 작업을 맨 앞으로 이동
-        solution.insert(0, solution.pop(longest_remaining_job_index))
-        
-    return solution
-# 기계별 작업 완료 시간을 업데이트하는 함수 추가
-def update_machine_completion_times(machine_completion_times, job, machine_allocations):
-    for machine, time in job:
-        if machine not in machine_completion_times:
-            machine_completion_times[machine] = 0
-        machine_completion_times[machine] += time
-        machine_allocations[machine].append(machine_completion_times[machine])
-    return machine_completion_times, machine_allocations
-
-def allocate_jobs_with_ECT(solution, machine_completion_times):
-    machine_allocations = {machine: [] for machine in machine_completion_times.keys()}
-    allocated_jobs = []
-
-    for job in solution:
-        allocated_job = []
+def get_makespan(schedule):
+    # 각 작업의 소요 시간을 합산하여 makespan 계산
+    total_time = 0
+    for job in schedule:
         for task in job:
-            # 각 태스크를 처리할 수 있는 가장 빠른 기계를 찾습니다.
-            best_machine = min(machine_completion_times, key=lambda x: machine_completion_times[x])
-            # 해당 기계의 완료 시간을 업데이트합니다.
-            machine_completion_times[best_machine] += task[1]
-            # 할당된 태스크 정보를 업데이트합니다. (기계 번호, 처리 시간)
-            allocated_job.append((best_machine, task[1]))
-            # 기계별 할당된 작업 시간을 업데이트합니다.
-            machine_allocations[best_machine].append(machine_completion_times[best_machine])
-        # 전체 작업에 대한 할당 결과를 업데이트합니다.
-        allocated_jobs.append(allocated_job)
-    
-    # 수정된 함수에서는 각 작업에 대한 할당된 결과를 반환합니다.
-    return allocated_jobs, machine_allocations
+            total_time += task[1]  # task[1]은 각 작업의 소요 시간
+    return total_time
 
-def swap_jobs(solution, job_index1, job_index2):
-    # 두 작업 위치를 교환하는 로직을 구현합니다.
-    temp = solution[job_index1]
-    solution[job_index1] = solution[job_index2]
-    solution[job_index2] = temp
 
-def simulated_annealing_solver(filename):
-    jobs = read_problem_from_csv(filename)
-    current_solution = jobs
-    current_makespan = calculate_makespan(current_solution)
-    best_solution = current_solution
-    best_makespan = current_makespan
+def get_neighbour(schedule):
+    # 이웃해(solution) 생성을 위한 두 작업의 위치를 무작위로 교환
+    a, b = random.sample(range(len(schedule)), 2)
+    new_schedule = schedule[:]
+    new_schedule[a], new_schedule[b] = new_schedule[b], new_schedule[a]
+    return new_schedule
+
+def accept_probability(old_cost, new_cost, temperature):
+    # 새로운 해가 더 나쁜 경우(즉, makespan이 더 큰 경우)에도 일정 확률로 선택
+    if new_cost > old_cost:
+        return 1.0
+    else:
+        return math.exp((old_cost - new_cost) / temperature)
+import csv
+
+def read_schedule_from_file(file_path):
+    schedule = []
     
-    temp = 10000  # 초기 온도
-    final_temp = 0.1  # 최종 온도
-    cooling_rate = 0.03  # 초기 냉각률
-    no_improvement_steps = 0  # 개선되지 않은 단계 수
+    with open(file_path, 'r') as file:
+        for line in file:
+            # 각 줄의 양 끝에서 큰따옴표를 제거하고, 쉼표로 항목을 분리합니다.
+            items = line.strip().strip('"').split('","')
+            
+            # 각 항목을 다시 쉼표로 분리하여 숫자 쌍으로 변환하고, 이를 정수로 변환합니다.
+            row = [(int(pair.split(',')[0]), int(pair.split(',')[1])) for pair in items]
+            schedule.append(row)
+    
+    return schedule
+
+def simulated_annealing(filename):
+    # 파일에서 작업 스케줄 읽기
+    schedule = read_schedule_from_file(filename)
+    
+    temp = 20000
+    final_temp = 10
+    cooling_rate = 0.99
+    
+    current_solution = initial_solution(schedule)
+    current_cost = get_makespan(current_solution)
     
     while temp > final_temp:
-        new_solution = [list(job) for job in current_solution]
+        new_solution = get_neighbour(current_solution)
+        new_cost = get_makespan(new_solution)
         
-        # 랜덤으로 작업을 선택하여 위치를 교환합니다.
-        job_index1, job_index2 = random.sample(range(len(new_solution)), 2)
-        swap_jobs(new_solution, job_index1, job_index2)
-        
-        new_makespan = calculate_makespan(new_solution)
-        
-        if new_makespan < current_makespan or math.exp((current_makespan - new_makespan) / temp) > random.random():
+        if accept_probability(current_cost, new_cost, temp) > random.random():
             current_solution = new_solution
-            current_makespan = new_makespan
-            no_improvement_steps = 0  # 개선되었으므로 카운터를 초기화합니다.
-            
-            if new_makespan < best_makespan:
-                best_solution = current_solution
-                best_makespan = new_makespan
-        else:
-            no_improvement_steps += 1  # 개선되지 않았으므로 카운터를 증가시킵니다.
+            current_cost = new_cost
         
-        # 적응적 냉각률 조정
-        if no_improvement_steps > 10:  # 해가 10단계 동안 개선되지 않은 경우
-            cooling_rate = min(0.05, cooling_rate + 0.01)  # 냉각률을 증가
-            no_improvement_steps = 0  # 카운터 초기화
-        else:
-            cooling_rate = max(0.01, cooling_rate - 0.001)  # 해가 개선될 때마다 냉각률을 약간 감소
-        
-        temp *= 1 - cooling_rate
+        temp *= cooling_rate
     
-    return best_makespan, best_solution
+    return current_cost, current_solution
 
-def print_jobs_allocation(jobs):
-    max_machine_number = max(machine for job in jobs for machine, _ in job)
-    machine_allocations = {machine: [] for machine in range(1, max_machine_number + 1)}
-    
-    for job_id, job in enumerate(jobs, start=1):
-        for machine, _ in job:
-            machine_allocations[machine].append(job_id)
 
-# 예시 사용
-for i in range(302, 401):
+for i in range(1, 201):
     filename = f"problem_{i}.csv"
-    makespan, jobs = simulated_annealing_solver(filename)
+    makespan, jobs = simulated_annealing(filename)
     print(f"Problem {i}: makespan = {makespan}")
-    print_jobs_allocation(jobs)
-#     # 코드 실행 후 시간 측정
-#     end_time = time.time()
+#    print("Job allocation:", jobs)
 
-# # 총 실행 시간을 계산하고 출력
-#     total_time = end_time - start_time
-#     print(f"총 실행 시간: {total_time}초")
+
+# 파일 처리 로직을 추가해야 합니다. 아래 코드는 수정이 필요합니다.
+# for i in range(302, 401):
+#     filename = f"problem_{i}.csv"
+#     # 파일에서 스케줄을 읽어와야 합니다. 아래는 예시 코드이며 실제로는 파일 처리 로직이 필요합니다.
+#     # makespan, jobs = simulated_annealing(read_schedule_from_file(filename))
+#     print(f"Problem {i}: makespan = {makespan}")

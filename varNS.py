@@ -4,6 +4,8 @@ import math
 import csv
 import random
 import time
+# 코드 실행 전 시간 측정
+start_time = time.time()
 
 def exchange(jobs, k):
     """
@@ -70,24 +72,63 @@ def reverse_sublist(lst, start, end):
 def insert_sublist(lst, start, end):
     element = lst.pop(start)
     lst.insert(end, element)
+    
+def rotate_sublist(lst, start, end, steps):
+    sublist = lst[start:end]
+    steps = steps % len(sublist)
+    lst[start:end] = sublist[-steps:] + sublist[:-steps]
 
-def shaking(jobs, k, method="exchange"):
-    new_jobs = [list(job) for job in jobs]
+def shaking(current_solution, k, method):
+    # 이전 이웃 생성 방법들의 구현은 유지
+    new_solution = current_solution.copy()  # 현재 해 복사
+    
+    if method == "gap_adjust":
+        # gap_adjust 방법 구현
+        job_index = random.randint(0, len(new_solution) - 2)  # 마지막 작업은 제외
+        gap = random.randint(1, 3)  # 조정할 간격 예시
+        # 간단한 구현을 위해, 작업 간 간격을 조정하는 대신 작업 순서 변경으로 시뮬레이션
+        new_solution.insert(job_index + gap if job_index + gap < len(new_solution) else len(new_solution) - 1, new_solution.pop(job_index))
+        return new_solution
+    
+    elif method == "block_reverse":
+        # block_reverse 방법 구현
+        start_index = random.randint(0, len(new_solution) - k)  # 블록의 시작 위치
+        block = new_solution[start_index:start_index + k]
+        block.reverse()  # 블록 내 작업 순서 뒤집기
+        new_solution = new_solution[:start_index] + block + new_solution[start_index + k:]
+        return new_solution
+
+    intensity = max(1, k // 2)  # 변형 강도를 조절하기 위한 변수, 최소값은 1
+
     if method == "exchange":
-        for _ in range(k):
-            job1, job2 = random.sample(range(len(new_jobs)), 2)
-            new_jobs[job1], new_jobs[job2] = new_jobs[job2], new_jobs[job1]
+        for _ in range(intensity):
+            job1, job2 = random.sample(range(len(new_solution)), 2)
+            new_solution[job1], new_solution[job2] = new_solution[job2], new_solution[job1]
+    
     elif method == "reverse":
-        if len(new_jobs) > 1:
-            start = random.randint(0, len(new_jobs) - 2)
-            end = random.randint(start + 1, len(new_jobs))
-            reverse_sublist(new_jobs, start, end)
+        for _ in range(intensity):
+            if len(new_solution) > 1:
+                start = random.randint(0, len(new_solution) - 2)
+                end = random.randint(start + 1, len(new_solution))
+                new_solution[start:end] = reversed(new_solution[start:end])
+    
     elif method == "insert":
-        if len(new_jobs) > 1:
-            start = random.randint(0, len(new_jobs) - 1)
-            end = random.randint(0, len(new_jobs) - 1)
-            insert_sublist(new_jobs, start, end)
-    return new_jobs
+        for _ in range(intensity):
+            if len(new_solution) > 1:
+                start = random.randint(0, len(new_solution) - 1)
+                end = random.randint(0, len(new_solution) - 1)
+                job = new_solution.pop(start)
+                new_solution.insert(end, job)
+    
+    elif method == "rotate":
+        for _ in range(intensity):
+            if len(new_solution) > 1:
+                start = random.randint(0, len(new_solution) - 2)
+                end = random.randint(start + 1, len(new_solution))
+                steps = random.randint(1, end - start)
+                new_solution[start:end] = new_solution[start+steps:end] + new_solution[start:start+steps]
+
+    return new_solution
 
 def read_problem_from_csv(filename):
     jobs = []
@@ -98,126 +139,103 @@ def read_problem_from_csv(filename):
             jobs.append(job)
     return jobs
 
-# def calculate_makespan(jobs):
-#     max_time = 0
-#     for job in jobs:
-#         job_time = sum([time for _, time in job])
-#         if job_time > max_time:
-#             max_time = job_time
-#     return max_time
-
 def calculate_makespan(jobs):
-    """
-    작업 스케줄의 총 처리 시간(makespan)을 계산합니다.
-    """
-    machine_times = {}
+    max_time = 0
     for job in jobs:
-        current_start_time = 0
-        for machine, time in job:
-            if machine not in machine_times:
-                machine_times[machine] = 0
-            start_time = max(current_start_time, machine_times[machine])
-            machine_times[machine] = start_time + time
-            current_start_time = machine_times[machine]
-    return max(machine_times.values())
+        job_time = sum([time for _, time in job])
+        if job_time > max_time:
+            max_time = job_time
+    return max_time
 
-def generate_initial_solutions(jobs, method_count=5):
+def sum_nested(iterable):
+    total = 0
+    for item in iterable:
+        if isinstance(item, (list, tuple)):
+            total += sum_nested(item)  # 재귀 호출
+        else:
+            total += item
+    return total
+
+def generate_advanced_initial_solutions(jobs, method_count=5):
     """
-    다양한 방법으로 초기 해를 생성합니다.
+    다양한 방법으로 초기 해를 생성하고, 가장 적은 make span을 보장하는 해들을 반환합니다.
     """
+    neighborhood_functions = [exchange, reverse, insert, two_part_exchange, group_move]
     solutions = []
 
     # 원본 리스트를 기반으로 한 해
-    solutions.append(jobs[:])
+    solutions.append((jobs[:], calculate_makespan(jobs)))
 
-    # 무작위 해
-    for _ in range(method_count-1):
-        new_jobs = jobs[:]
-        random.shuffle(new_jobs)
-        solutions.append(new_jobs)
-    
-    return solutions
+    # 각 함수를 사용하여 해 생성
+    for func in neighborhood_functions:
+        new_solution = func(jobs[:], 1)  # k=1로 설정하여 각 함수를 한 번씩 적용
+        solutions.append((new_solution, calculate_makespan(new_solution)))
 
-def local_search(jobs):
-    current_solution = jobs
-    current_makespan = calculate_makespan(current_solution)
-    improved = True
-    
-    while improved:
-        improved = False
-        for i in range(len(jobs)):
-            for j in range(i + 1, len(jobs)):
-                new_solution = [list(job) for job in current_solution]
-                new_solution[i], new_solution[j] = new_solution[j], new_solution[i]
-                new_makespan = calculate_makespan(new_solution)
-                if new_makespan < current_makespan:
-                    current_solution = new_solution
-                    current_makespan = new_makespan
-                    improved = True
-                    break
-            if improved:
-                break
-                
-    return current_solution
+    # 모든 해를 make span에 따라 정렬
+    solutions.sort(key=lambda x: x[1])
 
-def variable_neighborhood_search_improved(filename):
+    # 가장 좋은 해들을 선택
+    selected_solutions = [solution for solution, _ in solutions[:method_count]]
+
+    return selected_solutions
+
+def variable_neighborhood_search_less_optimized(filename):
     start_time = time.time()
     jobs = read_problem_from_csv(filename)
-    initial_solutions = generate_initial_solutions(jobs)
+    initial_solutions = generate_advanced_initial_solutions(jobs)
     best_solution = None
     best_makespan = float('inf')
 
-    for initial_solution in initial_solutions:
-        current_solution = initial_solution
-        current_makespan = calculate_makespan(current_solution)
+    # 초기 해답 집합에서 무작위로 하나의 해만 선택
+    initial_solution = random.choice(initial_solutions)
+    current_solution = initial_solution
+    current_makespan = calculate_makespan(current_solution)
 
-        if current_makespan < best_makespan:
-            best_solution = current_solution
-            best_makespan = current_makespan
+    if current_makespan < best_makespan:
+        best_solution = current_solution
+        best_makespan = current_makespan
 
-        k_max = int(math.sqrt(len(jobs)))  # 동적 k_max 설정
-        k = 1
-        methods = ["exchange", "reverse", "insert", "two_part_exchange", "group_move"]  # 추가 탐색 방법
-        iteration = 0
-        stuck_counter = 0
+    k_max = int(math.sqrt(len(jobs))) // 4  # k_max를 더 작게 설정
+    k = 1
+    methods = ["exchange", "reverse"]  # 사용 가능한 탐색 방법을 줄임
+    iteration = 0
+    stuck_counter = 0
 
-        while time.time() - start_time < 60:  # 1분 이내에 실행되도록 설정
-            for method in methods:
-                new_solution = globals()[method](current_solution, k)
-                new_makespan = calculate_makespan(new_solution)
-                if new_makespan < current_makespan:
-                    current_solution = new_solution
-                    current_makespan = new_makespan
-                    if new_makespan < best_makespan:
-                        best_solution = new_solution
-                        best_makespan = new_makespan
-                    k = 1  # k 값을 초기화
-                    break
-                else:
-                    stuck_counter += 1
-                    if stuck_counter >= len(methods):
-                        k += 1  # k 값을 증가
-                        stuck_counter = 0
-                if k > k_max:
-                    k = 1
+    while time.time() - start_time < 1:  # 실행 시간을 30초로 제한
+        method = random.choice(methods)  # 탐색 방법을 무작위로 선택
+        new_solution = shaking(current_solution, k, method)
+        
+        new_makespan = calculate_makespan(new_solution)
+        if new_makespan < current_makespan:
+            current_solution = new_solution
+            current_makespan = new_makespan
+            if new_makespan < best_makespan:
+                best_solution = new_solution
+                best_makespan = new_makespan
+            k = 1  # k 값을 초기화
+            stuck_counter = 0
+        else:
+            stuck_counter += 1
+            if stuck_counter >= 1:  # stuck_counter 조건을 더 강화
+                k += 1  # k 값을 증가
+                stuck_counter = 0
+        if k > k_max:
+            k = 1
 
-            iteration += 1
-            if iteration >= 1000:  # 최대 반복 횟수 제한
-                break
+        iteration += 1
+        if iteration >= 3:  # 최대 반복 횟수를 줄임
+            break
 
     return best_makespan, best_solution
 
-def print_jobs_allocation(jobs):
-    max_machine_number = max(machine for job in jobs for machine, _ in job)
-    machine_allocations = {machine: [] for machine in range(1, max_machine_number + 1)}
-    
-    for job_id, job in enumerate(jobs, start=1):
-        for machine, _ in job:
-            machine_allocations[machine].append(job_id)
-
-for i in range(1, 101):
+for i in range(1, 201):
     filename = f"problem_{i}.csv"
-    makespan, _ = variable_neighborhood_search_improved(filename)
-    print(f"문제 {i}: 총 처리 시간 = {makespan}")
+    makespan, _ = variable_neighborhood_search_less_optimized(filename)
+    print(f"Problem {i}: makespan = {makespan}")
+# # 코드 실행 후 시간 측정
+#     end_time = time.time()
 
+# # 총 실행 시간을 계산하고 출력
+#     total_time = end_time - start_time
+#     print(f"총 실행 시간: {total_time}초")
 

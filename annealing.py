@@ -1,6 +1,11 @@
 import csv
 import random
 import math
+import time
+import numpy as np
+
+# 코드 실행 전 시간 측정
+start_time = time.time()
 
 def read_problem_from_csv(filename):
     jobs = []
@@ -85,6 +90,11 @@ def allocate_jobs_with_ECT(solution, machine_completion_times):
     # 수정된 함수에서는 각 작업에 대한 할당된 결과를 반환합니다.
     return allocated_jobs, machine_allocations
 
+def swap_jobs(solution, job_index1, job_index2):
+    # 두 작업 위치를 교환하는 로직을 구현합니다.
+    temp = solution[job_index1]
+    solution[job_index1] = solution[job_index2]
+    solution[job_index2] = temp
 
 def simulated_annealing_solver(filename):
     jobs = read_problem_from_csv(filename)
@@ -93,39 +103,41 @@ def simulated_annealing_solver(filename):
     best_solution = current_solution
     best_makespan = current_makespan
     
-    temp = 500  # 초기 온도를 높임
-    final_temp = 0.1  # 최종 온도를 낮춤
-    cooling_rate = 0.01  # 냉각률을 더 낮게 조정하여 반복 횟수 증가
+    temp = 10000  # 초기 온도
+    final_temp = 0.1  # 최종 온도
+    cooling_rate = 0.03  # 초기 냉각률
+    no_improvement_steps = 0  # 개선되지 않은 단계 수
     
     while temp > final_temp:
         new_solution = [list(job) for job in current_solution]
         
+        # 랜덤으로 작업을 선택하여 위치를 교환합니다.
         job_index1, job_index2 = random.sample(range(len(new_solution)), 2)
         swap_jobs(new_solution, job_index1, job_index2)
         
-        new_solution = optimize_critical_path(new_solution)
-        max_machine_number = 5
-        new_solution = optimize_machine_distribution_with_MRPT(new_solution)
-        machine_completion_times = {machine: 0 for machine in range(1, max_machine_number + 1)}
-        machine_allocations = allocate_jobs_with_ECT(new_solution, machine_completion_times)
-        for job in new_solution:
-            move_shortest_task_to_front(job)
-        
         new_makespan = calculate_makespan(new_solution)
         
-        if new_makespan < current_makespan or random.random() < math.exp((current_makespan - new_makespan) / temp):
+        if new_makespan < current_makespan or math.exp((current_makespan - new_makespan) / temp) > random.random():
             current_solution = new_solution
             current_makespan = new_makespan
+            no_improvement_steps = 0  # 개선되었으므로 카운터를 초기화합니다.
             
             if new_makespan < best_makespan:
                 best_solution = current_solution
                 best_makespan = new_makespan
+        else:
+            no_improvement_steps += 1  # 개선되지 않았으므로 카운터를 증가시킵니다.
+        
+        # 적응적 냉각률 조정
+        if no_improvement_steps > 10:  # 해가 10단계 동안 개선되지 않은 경우
+            cooling_rate = min(0.05, cooling_rate + 0.01)  # 냉각률을 증가
+            no_improvement_steps = 0  # 카운터 초기화
+        else:
+            cooling_rate = max(0.01, cooling_rate - 0.001)  # 해가 개선될 때마다 냉각률을 약간 감소
         
         temp *= 1 - cooling_rate
     
     return best_makespan, best_solution
-
-
 
 def print_jobs_allocation(jobs):
     max_machine_number = max(machine for job in jobs for machine, _ in job)
@@ -136,8 +148,14 @@ def print_jobs_allocation(jobs):
             machine_allocations[machine].append(job_id)
 
 # 예시 사용
-for i in range(1, 101):
+for i in range(302, 401):
     filename = f"problem_{i}.csv"
     makespan, jobs = simulated_annealing_solver(filename)
-    print(f"문제 {i}: 총 처리 시간 = {makespan}")
+    print(f"Problem {i}: makespan = {makespan}")
     print_jobs_allocation(jobs)
+#     # 코드 실행 후 시간 측정
+#     end_time = time.time()
+
+# # 총 실행 시간을 계산하고 출력
+#     total_time = end_time - start_time
+#     print(f"총 실행 시간: {total_time}초")

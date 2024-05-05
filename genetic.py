@@ -1,8 +1,10 @@
 import csv
 import random
-
+import time
 import copy
-import random
+
+# 코드 실행 전 시간 측정
+start_time = time.time()
 
 def tournament_selection(population, scores, k=3):
     # 토너먼트 선택
@@ -41,8 +43,6 @@ def read_problem_from_csv(filename):
 
 # 적합도 함수: 총 makespan 계산
 def calculate_makespan(jobs):
-    # 간단한 방식으로 makespan을 계산합니다.
-    # 이 부분은 JSP의 복잡성에 따라 매우 다르게 구현될 수 있습니다.
     max_time = 0
     for job in jobs:
         job_time = sum([time for _, time in job])
@@ -94,8 +94,14 @@ def print_jobs_allocation(jobs):
                 machine_allocations[machine].append(job_id)
 
     # 문제 해결 및 출력
-for i in range(1, 101):
+for i in range(302, 401):
     filename = f"problem_{i}.csv"
     makespan, jobs = genetic_algorithm_solver(filename)
-    print(f"Problem {i}: Total makespan = {makespan}")
+    print(f"Problem {i}: makespan = {makespan}")
     print_jobs_allocation(jobs)
+#     # 코드 실행 후 시간 측정
+#     end_time = time.time()
+
+# # 총 실행 시간을 계산하고 출력
+#     total_time = end_time - start_time
+#     print(f"총 실행 시간: {total_time}초")

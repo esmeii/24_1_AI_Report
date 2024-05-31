@@ -1,5 +1,9 @@
 import random
 import math
+import time
+
+# 코드 실행 전 시간 측정
+start_time = time.time()
 
 def initial_solution(schedule):
     # 초기 스케줄 생성
@@ -67,12 +71,18 @@ def simulated_annealing(filename):
     return current_cost, current_solution
 
 
-for i in range(1, 201):
+for i in range(1, 200):
     filename = f"problem_{i}.csv"
     makespan, jobs = simulated_annealing(filename)
     print(f"Problem {i}: makespan = {makespan}")
 #    print("Job allocation:", jobs)
 
+# 코드 실행 후 시간 측정
+    end_time = time.time()
+
+# 총 실행 시간을 계산하고 출력
+    total_time = end_time - start_time
+    print(f"총 실행 시간: {total_time}초")
 
 # 파일 처리 로직을 추가해야 합니다. 아래 코드는 수정이 필요합니다.
 # for i in range(302, 401):

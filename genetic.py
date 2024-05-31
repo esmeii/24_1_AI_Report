@@ -94,14 +94,14 @@ def print_jobs_allocation(jobs):
                 machine_allocations[machine].append(job_id)
 
     # 문제 해결 및 출력
-for i in range(302, 401):
+for i in range(1, 200):
     filename = f"problem_{i}.csv"
     makespan, jobs = genetic_algorithm_solver(filename)
     print(f"Problem {i}: makespan = {makespan}")
     print_jobs_allocation(jobs)
-#     # 코드 실행 후 시간 측정
-#     end_time = time.time()
+    # 코드 실행 후 시간 측정
+    end_time = time.time()
 
-# # 총 실행 시간을 계산하고 출력
-#     total_time = end_time - start_time
-#     print(f"총 실행 시간: {total_time}초")
+# 총 실행 시간을 계산하고 출력
+    total_time = end_time - start_time
+    print(f"총 실행 시간: {total_time}초")

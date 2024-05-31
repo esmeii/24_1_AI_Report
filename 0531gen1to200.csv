@@ -1,0 +1,398 @@
+Problem 1: makespan = 76
+총 실행 시간: 0.10343599319458008초
+Problem 2: makespan = 69
+총 실행 시간: 0.20712590217590332초
+Problem 3: makespan = 78
+총 실행 시간: 0.31206703186035156초
+Problem 4: makespan = 76
+총 실행 시간: 0.4155709743499756초
+Problem 5: makespan = 69
+총 실행 시간: 0.5189650058746338초
+Problem 6: makespan = 67
+총 실행 시간: 0.6240918636322021초
+Problem 7: makespan = 66
+총 실행 시간: 0.7279040813446045초
+Problem 8: makespan = 74
+총 실행 시간: 0.8326058387756348초
+Problem 9: makespan = 75
+총 실행 시간: 0.9361789226531982초
+Problem 10: makespan = 69
+총 실행 시간: 1.038830041885376초
+Problem 11: makespan = 79
+총 실행 시간: 1.1424310207366943초
+Problem 12: makespan = 69
+총 실행 시간: 1.245959997177124초
+Problem 13: makespan = 61
+총 실행 시간: 1.3499109745025635초
+Problem 14: makespan = 75
+총 실행 시간: 1.453690767288208초
+Problem 15: makespan = 68
+총 실행 시간: 1.5574069023132324초
+Problem 16: makespan = 74
+총 실행 시간: 1.661081075668335초
+Problem 17: makespan = 66
+총 실행 시간: 1.7653708457946777초
+Problem 18: makespan = 74
+총 실행 시간: 1.8684988021850586초
+Problem 19: makespan = 68
+총 실행 시간: 1.9719769954681396초
+Problem 20: makespan = 75
+총 실행 시간: 2.0751900672912598초
+Problem 21: makespan = 74
+총 실행 시간: 2.177964925765991초
+Problem 22: makespan = 71
+총 실행 시간: 2.2804229259490967초
+Problem 23: makespan = 74
+총 실행 시간: 2.3835771083831787초
+Problem 24: makespan = 69
+총 실행 시간: 2.486457109451294초
+Problem 25: makespan = 79
+총 실행 시간: 2.5888497829437256초
+Problem 26: makespan = 72
+총 실행 시간: 2.7017557621002197초
+Problem 27: makespan = 63
+총 실행 시간: 2.8056068420410156초
+Problem 28: makespan = 80
+총 실행 시간: 2.9073081016540527초
+Problem 29: makespan = 83
+총 실행 시간: 3.009167194366455초
+Problem 30: makespan = 71
+총 실행 시간: 3.1112771034240723초
+Problem 31: makespan = 72
+총 실행 시간: 3.213460922241211초
+Problem 32: makespan = 78
+총 실행 시간: 3.315523147583008초
+Problem 33: makespan = 80
+총 실행 시간: 3.4173061847686768초
+Problem 34: makespan = 71
+총 실행 시간: 3.5190091133117676초
+Problem 35: makespan = 74
+총 실행 시간: 3.621872901916504초
+Problem 36: makespan = 81
+총 실행 시간: 3.724591016769409초
+Problem 37: makespan = 74
+총 실행 시간: 3.8267698287963867초
+Problem 38: makespan = 68
+총 실행 시간: 3.928823947906494초
+Problem 39: makespan = 70
+총 실행 시간: 4.032436847686768초
+Problem 40: makespan = 69
+총 실행 시간: 4.134938955307007초
+Problem 41: makespan = 76
+총 실행 시간: 4.23702597618103초
+Problem 42: makespan = 67
+총 실행 시간: 4.338946104049683초
+Problem 43: makespan = 81
+총 실행 시간: 4.441805124282837초
+Problem 44: makespan = 71
+총 실행 시간: 4.5438220500946045초
+Problem 45: makespan = 68
+총 실행 시간: 4.646223783493042초
+Problem 46: makespan = 72
+총 실행 시간: 4.748625993728638초
+Problem 47: makespan = 74
+총 실행 시간: 4.850795030593872초
+Problem 48: makespan = 74
+총 실행 시간: 4.952884912490845초
+Problem 49: makespan = 73
+총 실행 시간: 5.055639028549194초
+Problem 50: makespan = 76
+총 실행 시간: 5.15780782699585초
+Problem 51: makespan = 76
+총 실행 시간: 5.259891986846924초
+Problem 52: makespan = 67
+총 실행 시간: 5.362362861633301초
+Problem 53: makespan = 74
+총 실행 시간: 5.464641094207764초
+Problem 54: makespan = 71
+총 실행 시간: 5.5669519901275635초
+Problem 55: makespan = 73
+총 실행 시간: 5.669595956802368초
+Problem 56: makespan = 71
+총 실행 시간: 5.771959066390991초
+Problem 57: makespan = 69
+총 실행 시간: 5.874486923217773초
+Problem 58: makespan = 83
+총 실행 시간: 5.977163076400757초
+Problem 59: makespan = 80
+총 실행 시간: 6.079270839691162초
+Problem 60: makespan = 70
+총 실행 시간: 6.181782960891724초
+Problem 61: makespan = 67
+총 실행 시간: 6.284690856933594초
+Problem 62: makespan = 74
+총 실행 시간: 6.387235164642334초
+Problem 63: makespan = 65
+총 실행 시간: 6.489999771118164초
+Problem 64: makespan = 69
+총 실행 시간: 6.592084884643555초
+Problem 65: makespan = 69
+총 실행 시간: 6.6951518058776855초
+Problem 66: makespan = 71
+총 실행 시간: 6.799424886703491초
+Problem 67: makespan = 81
+총 실행 시간: 6.903563976287842초
+Problem 68: makespan = 77
+총 실행 시간: 7.007110834121704초
+Problem 69: makespan = 72
+총 실행 시간: 7.111263036727905초
+Problem 70: makespan = 80
+총 실행 시간: 7.214514970779419초
+Problem 71: makespan = 62
+총 실행 시간: 7.317844867706299초
+Problem 72: makespan = 69
+총 실행 시간: 7.4198219776153564초
+Problem 73: makespan = 70
+총 실행 시간: 7.5218470096588135초
+Problem 74: makespan = 63
+총 실행 시간: 7.624089002609253초
+Problem 75: makespan = 72
+총 실행 시간: 7.7264487743377686초
+Problem 76: makespan = 75
+총 실행 시간: 7.828526973724365초
+Problem 77: makespan = 71
+총 실행 시간: 7.93104887008667초
+Problem 78: makespan = 75
+총 실행 시간: 8.03396201133728초
+Problem 79: makespan = 77
+총 실행 시간: 8.136581897735596초
+Problem 80: makespan = 68
+총 실행 시간: 8.240365028381348초
+Problem 81: makespan = 69
+총 실행 시간: 8.343546152114868초
+Problem 82: makespan = 76
+총 실행 시간: 8.445671796798706초
+Problem 83: makespan = 69
+총 실행 시간: 8.548202991485596초
+Problem 84: makespan = 80
+총 실행 시간: 8.650725841522217초
+Problem 85: makespan = 69
+총 실행 시간: 8.754181861877441초
+Problem 86: makespan = 74
+총 실행 시간: 8.856271028518677초
+Problem 87: makespan = 75
+총 실행 시간: 8.957952976226807초
+Problem 88: makespan = 77
+총 실행 시간: 9.060746908187866초
+Problem 89: makespan = 75
+총 실행 시간: 9.162240028381348초
+Problem 90: makespan = 73
+총 실행 시간: 9.264935970306396초
+Problem 91: makespan = 64
+총 실행 시간: 9.367290019989014초
+Problem 92: makespan = 73
+총 실행 시간: 9.46918797492981초
+Problem 93: makespan = 75
+총 실행 시간: 9.571227788925171초
+Problem 94: makespan = 80
+총 실행 시간: 9.673228025436401초
+Problem 95: makespan = 76
+총 실행 시간: 9.776111125946045초
+Problem 96: makespan = 75
+총 실행 시간: 9.879384994506836초
+Problem 97: makespan = 73
+총 실행 시간: 9.982860088348389초
+Problem 98: makespan = 70
+총 실행 시간: 10.087164878845215초
+Problem 99: makespan = 67
+총 실행 시간: 10.190017938613892초
+Problem 100: makespan = 65
+총 실행 시간: 10.293149948120117초
+Problem 101: makespan = 75
+총 실행 시간: 10.397334098815918초
+Problem 102: makespan = 77
+총 실행 시간: 10.501420021057129초
+Problem 103: makespan = 82
+총 실행 시간: 10.605266809463501초
+Problem 104: makespan = 67
+총 실행 시간: 10.7083740234375초
+Problem 105: makespan = 76
+총 실행 시간: 10.82143783569336초
+Problem 106: makespan = 72
+총 실행 시간: 10.93853497505188초
+Problem 107: makespan = 69
+총 실행 시간: 11.047214984893799초
+Problem 108: makespan = 71
+총 실행 시간: 11.15394401550293초
+Problem 109: makespan = 76
+총 실행 시간: 11.258190155029297초
+Problem 110: makespan = 72
+총 실행 시간: 11.363334894180298초
+Problem 111: makespan = 74
+총 실행 시간: 11.467463970184326초
+Problem 112: makespan = 83
+총 실행 시간: 11.57213306427002초
+Problem 113: makespan = 76
+총 실행 시간: 11.676755905151367초
+Problem 114: makespan = 72
+총 실행 시간: 11.780497789382935초
+Problem 115: makespan = 82
+총 실행 시간: 11.884540796279907초
+Problem 116: makespan = 74
+총 실행 시간: 11.988517045974731초
+Problem 117: makespan = 72
+총 실행 시간: 12.092124938964844초
+Problem 118: makespan = 72
+총 실행 시간: 12.195683002471924초
+Problem 119: makespan = 71
+총 실행 시간: 12.299176931381226초
+Problem 120: makespan = 71
+총 실행 시간: 12.40326189994812초
+Problem 121: makespan = 73
+총 실행 시간: 12.505913019180298초
+Problem 122: makespan = 76
+총 실행 시간: 12.609292030334473초
+Problem 123: makespan = 74
+총 실행 시간: 12.712015151977539초
+Problem 124: makespan = 69
+총 실행 시간: 12.815526962280273초
+Problem 125: makespan = 74
+총 실행 시간: 12.919318914413452초
+Problem 126: makespan = 73
+총 실행 시간: 13.0224449634552초
+Problem 127: makespan = 75
+총 실행 시간: 13.126260995864868초
+Problem 128: makespan = 68
+총 실행 시간: 13.229800939559937초
+Problem 129: makespan = 71
+총 실행 시간: 13.33420991897583초
+Problem 130: makespan = 76
+총 실행 시간: 13.437750101089478초
+Problem 131: makespan = 77
+총 실행 시간: 13.540319919586182초
+Problem 132: makespan = 69
+총 실행 시간: 13.643910884857178초
+Problem 133: makespan = 78
+총 실행 시간: 13.74667501449585초
+Problem 134: makespan = 60
+총 실행 시간: 13.84971809387207초
+Problem 135: makespan = 66
+총 실행 시간: 13.952845096588135초
+Problem 136: makespan = 74
+총 실행 시간: 14.055521965026855초
+Problem 137: makespan = 75
+총 실행 시간: 14.158973932266235초
+Problem 138: makespan = 68
+총 실행 시간: 14.262458801269531초
+Problem 139: makespan = 74
+총 실행 시간: 14.366272926330566초
+Problem 140: makespan = 71
+총 실행 시간: 14.469523906707764초
+Problem 141: makespan = 77
+총 실행 시간: 14.573101997375488초
+Problem 142: makespan = 72
+총 실행 시간: 14.676315784454346초
+Problem 143: makespan = 71
+총 실행 시간: 14.780384063720703초
+Problem 144: makespan = 73
+총 실행 시간: 14.883425951004028초
+Problem 145: makespan = 75
+총 실행 시간: 14.986682176589966초
+Problem 146: makespan = 82
+총 실행 시간: 15.089205026626587초
+Problem 147: makespan = 77
+총 실행 시간: 15.193283081054688초
+Problem 148: makespan = 73
+총 실행 시간: 15.295975923538208초
+Problem 149: makespan = 76
+총 실행 시간: 15.399356842041016초
+Problem 150: makespan = 70
+총 실행 시간: 15.502143859863281초
+Problem 151: makespan = 79
+총 실행 시간: 15.605008840560913초
+Problem 152: makespan = 79
+총 실행 시간: 15.708373069763184초
+Problem 153: makespan = 69
+총 실행 시간: 15.812656879425049초
+Problem 154: makespan = 73
+총 실행 시간: 15.916738033294678초
+Problem 155: makespan = 69
+총 실행 시간: 16.021188020706177초
+Problem 156: makespan = 65
+총 실행 시간: 16.125437021255493초
+Problem 157: makespan = 80
+총 실행 시간: 16.229568004608154초
+Problem 158: makespan = 68
+총 실행 시간: 16.333409070968628초
+Problem 159: makespan = 71
+총 실행 시간: 16.43717885017395초
+Problem 160: makespan = 72
+총 실행 시간: 16.541356086730957초
+Problem 161: makespan = 75
+총 실행 시간: 16.644793033599854초
+Problem 162: makespan = 79
+총 실행 시간: 16.747843980789185초
+Problem 163: makespan = 75
+총 실행 시간: 16.851983070373535초
+Problem 164: makespan = 69
+총 실행 시간: 16.95535898208618초
+Problem 165: makespan = 64
+총 실행 시간: 17.058401107788086초
+Problem 166: makespan = 70
+총 실행 시간: 17.162147045135498초
+Problem 167: makespan = 75
+총 실행 시간: 17.265635013580322초
+Problem 168: makespan = 73
+총 실행 시간: 17.369266986846924초
+Problem 169: makespan = 72
+총 실행 시간: 17.472338914871216초
+Problem 170: makespan = 78
+총 실행 시간: 17.57603406906128초
+Problem 171: makespan = 67
+총 실행 시간: 17.681122064590454초
+Problem 172: makespan = 74
+총 실행 시간: 17.78450298309326초
+Problem 173: makespan = 72
+총 실행 시간: 17.888906955718994초
+Problem 174: makespan = 73
+총 실행 시간: 17.993005990982056초
+Problem 175: makespan = 70
+총 실행 시간: 18.118189096450806초
+Problem 176: makespan = 67
+총 실행 시간: 18.224769115447998초
+Problem 177: makespan = 74
+총 실행 시간: 18.328616857528687초
+Problem 178: makespan = 67
+총 실행 시간: 18.432957887649536초
+Problem 179: makespan = 68
+총 실행 시간: 18.536972045898438초
+Problem 180: makespan = 74
+총 실행 시간: 18.640870809555054초
+Problem 181: makespan = 69
+총 실행 시간: 18.744943857192993초
+Problem 182: makespan = 76
+총 실행 시간: 18.848886013031006초
+Problem 183: makespan = 73
+총 실행 시간: 18.954006910324097초
+Problem 184: makespan = 75
+총 실행 시간: 19.057808876037598초
+Problem 185: makespan = 75
+총 실행 시간: 19.161240100860596초
+Problem 186: makespan = 70
+총 실행 시간: 19.264965772628784초
+Problem 187: makespan = 72
+총 실행 시간: 19.369549036026초
+Problem 188: makespan = 80
+총 실행 시간: 19.47398591041565초
+Problem 189: makespan = 74
+총 실행 시간: 19.578124046325684초
+Problem 190: makespan = 72
+총 실행 시간: 19.680428981781006초
+Problem 191: makespan = 75
+총 실행 시간: 19.783884048461914초
+Problem 192: makespan = 75
+총 실행 시간: 19.887558937072754초
+Problem 193: makespan = 62
+총 실행 시간: 19.99104905128479초
+Problem 194: makespan = 77
+총 실행 시간: 20.09505581855774초
+Problem 195: makespan = 73
+총 실행 시간: 20.198724031448364초
+Problem 196: makespan = 76
+총 실행 시간: 20.301090955734253초
+Problem 197: makespan = 77
+총 실행 시간: 20.405675888061523초
+Problem 198: makespan = 74
+총 실행 시간: 20.50961995124817초
+Problem 199: makespan = 74
+총 실행 시간: 20.61318874359131초

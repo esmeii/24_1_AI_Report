@@ -84,9 +84,3 @@ for i in range(1, 200):
     total_time = end_time - start_time
     print(f"총 실행 시간: {total_time}초")
 
-# 파일 처리 로직을 추가해야 합니다. 아래 코드는 수정이 필요합니다.
-# for i in range(302, 401):
-#     filename = f"problem_{i}.csv"
-#     # 파일에서 스케줄을 읽어와야 합니다. 아래는 예시 코드이며 실제로는 파일 처리 로직이 필요합니다.
-#     # makespan, jobs = simulated_annealing(read_schedule_from_file(filename))
-#     print(f"Problem {i}: makespan = {makespan}")

@@ -79,7 +79,6 @@ def rotate_sublist(lst, start, end, steps):
     lst[start:end] = sublist[-steps:] + sublist[:-steps]
 
 def shaking(current_solution, k, method):
-    # 이전 이웃 생성 방법들의 구현은 유지
     new_solution = current_solution.copy()  # 현재 해 복사
     
     if method == "gap_adjust":
